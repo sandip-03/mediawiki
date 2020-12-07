@@ -1,0 +1,13 @@
+---
+php_root: '/opt/rh/rh-php73/root'
+http_root: "/opt/rh/httpd24/root"
+
+mysql_root_user_name: 'root'
+mysql_root_user_password: 'Passw0rd'
+mysql_db_port: 3306
+app_db_name: 'wikidb'
+app_db_user: 'wiki'
+app_db_password: 'Passw0rd'
+app_user: 'wikiapp'
+mediawiki_file: 'mediawiki-1.35.0'
+mediawiki_source_url: "https://releases.wikimedia.org/mediawiki/1.35/{{ mediawiki_file }}.tar.gz"

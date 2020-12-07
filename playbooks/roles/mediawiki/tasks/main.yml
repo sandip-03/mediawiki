@@ -1,0 +1,69 @@
+---
+- debug: msg="main - Mediawiki installation"
+
+- name: create a new database with name {{ app_db_name }}
+  mysql_db:
+    name: '{{ app_db_name }}'
+    login_host: 'localhost'
+    login_port: "{{ mysql_db_port }}"
+    login_user: '{{ mysql_root_user_name }}'
+    login_password: '{{ mysql_root_user_password }}'
+    state: present
+
+- name: create the DB user for the application
+  mysql_user:
+    name: '{{ app_db_user }}'
+    password: '{{ app_db_password }}'
+    host: '%'
+    priv: '{{ app_db_name }}.*:ALL'
+    login_host: 'localhost'
+    login_port: '{{ mysql_db_port }}'
+    login_user: '{{ mysql_root_user_name }}'
+    login_password: '{{ mysql_root_user_password }}'
+    state: present
+
+- name: create_users - add {{ app_user }} group
+  group:
+    name: '{{ app_user }}'
+
+- name: create_users - add {{ app_user }} user
+  user:
+    name: '{{ app_user }}'
+    group: '{{ app_user }}'
+
+- name: Download  mediawiki_file from HTTP repository
+  get_url:
+    url: '{{ mediawiki_source_url }}'
+    dest: '/home/{{ app_user }}/{{ mediawiki_file }}.tar.gz'
+    owner: '{{ app_user }}'
+    group: '{{ app_user }}'
+    mode: '0755'
+
+- name: Unarchive mediawiki_file {{ mediawiki_file }}
+  unarchive:
+    src: '/home/{{ app_user }}/{{ mediawiki_file }}.tar.gz'
+    dest: '{{ http_root }}/var/www/html'
+    owner: 'apache'
+    group: 'apache'
+    mode: '0755'
+    copy: 'no'
+
+- name: Create link to {{ mediawiki_file }}
+  file:
+    src: '{{ http_root }}/var/www/html/{{ mediawiki_file }}'
+    dest: '{{ http_root }}/var/www/html/mediawiki'
+    owner: 'apache'
+    group: 'apache'
+    force: yes
+    state: link
+
+- name: Setting Selinux rules on mediawiki folder
+  command: restorecon -FR "{{ item }}"
+  with_items:
+    - "{{ http_root }}/var/www/html/mediawiki"
+    - "{{ http_root }}/var/www/html/{{ mediawiki_file }}"
+
+- name: Enable service httpd and ensure it is not masked
+  systemd:
+    name: httpd24-httpd
+    state: restarted

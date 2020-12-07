@@ -1,0 +1,55 @@
+---
+- include_vars: http_required_vars.yml
+
+- name: install software collections
+  yum:
+    name: centos-release-scl
+    update_cache: yes
+    state: latest
+
+- name: Install apache http rpms
+  yum:
+    name: "{{ item }}"
+    update_cache: yes
+    state: present
+  with_items:
+  - "{{ http_package_list }}"
+
+- name: Enable service httpd and ensure it is not masked
+  systemd:
+    name: httpd24-httpd
+    enabled: yes
+    masked: no
+
+- name: Enable service httpd and ensure it is not masked
+  systemd:
+    name: httpd24-httpd
+    state: started
+
+- name: Firewall  task - install firewalld from yum repository
+  yum:
+    name: firewalld
+    update_cache: yes
+    state: latest
+
+- name: Firewall  task - ensure firewalld is running
+  systemd:
+    state: started
+    name: firewalld
+
+- name: Firewall  task - Allow http and https traffic
+  firewalld:
+    zone: public
+    service: "{{ item }}"
+    permanent: true
+    state: enabled
+  with_items:
+  - "http"
+  - "https"
+
+- name: Firewall  task - reload firewalld
+  systemd:
+    state: reloaded
+    name: firewalld
+
+

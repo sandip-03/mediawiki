@@ -1,0 +1,62 @@
+---
+- include_vars: mysql_required_vars.yml
+
+- name: Install mysql db
+  yum:
+    name: "{{ item }}"
+    update_cache: yes
+    state: present
+  with_items:
+  - "{{ mysql_rpm_list }}"
+
+- name: Enable mysql db
+  systemd:
+    name: mariadb
+    enabled: yes
+    masked: no
+
+- name: Start mysql db
+  systemd:
+    name: mariadb
+    state: started
+
+- name: Ensure default root user can login only from localhost
+  mysql_user:
+    name: "{{ mysql_root_user_name }}"
+    password: "{{ mysql_root_user_password }}"
+    host: 'localhost'
+    priv: '*.*:ALL,GRANT'
+
+- name: Get list of hosts for the anonymous user.
+  command: mysql -h localhost -u {{ mysql_root_user_name }} -p{{ mysql_root_user_password }} -NBe 'SELECT Host FROM mysql.user WHERE User = ""'
+  register: mysql_anonymous_hosts
+  changed_when: false
+  check_mode: false
+
+- name: Remove anonymous MySQL users.
+  mysql_user:
+    name: ""
+    host: "{{ item }}"
+    login_host: 'localhost'
+    login_port: "{{ mysql_db_port }}"
+    login_user: "{{ mysql_root_user_name }}"
+    login_password: "{{ mysql_root_user_password }}"
+    state: absent
+  with_items: "{{ mysql_anonymous_hosts.stdout_lines|default([]) }}"
+
+- name: Remove MySQL test database.
+  mysql_db:
+    name: test
+    login_host: 'localhost'
+    login_port: "{{ mysql_db_port }}"
+    login_user: "{{ mysql_root_user_name }}"
+    login_password: "{{ mysql_root_user_password }}"
+    state: absent
+
+- name: Copy .my.cnf file with root password credentials.
+  template:
+    src: "root-my.cnf.j2"
+    dest: "{{ mysql_root_home }}/.my.cnf"
+    owner: root
+    group: root
+    mode: 0600

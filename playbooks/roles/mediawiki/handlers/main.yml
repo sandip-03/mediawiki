@@ -1,0 +1,24 @@
+---
+- name: ssh restart
+  service: 
+    name: sshd 
+    state: restarted
+    enabled: yes
+  ignore_errors: True
+
+- name: iptables restart
+  service: 
+    name: iptables
+    state: restarted
+    enabled: yes
+
+- name: ntp restart
+  service: 
+    name: ntpd 
+    state: restarted
+    enabled: yes
+
+- name: yum-clean-metadata
+  command: yum clean metadata
+  args:
+    warn: no  

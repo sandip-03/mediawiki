@@ -1,0 +1,7 @@
+---
+mysql_rpm_list:
+  - "mariadb-server"
+  - "mariadb"
+  - "mariadb-libs"
+  - "MySQL-python"
+  - "perl-DBD-MySQL"

@@ -1,0 +1,15 @@
+---
+- hosts: localhost
+  tasks:
+  - name: linux - wait until all host are listening to SSH port 22
+    wait_for:
+      host: "{{ item }}"
+      port: 22
+    with_items: "{{ groups.all_vms }}"
+
+- hosts: lamp
+  roles:
+    - role: mysql
+    - role: apache
+    - role: php
+    - role: mediawiki

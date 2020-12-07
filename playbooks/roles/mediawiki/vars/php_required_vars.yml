@@ -1,0 +1,8 @@
+---
+php_rpm_list:
+  - "php55"
+  - "php55-php"
+  - "php55-php-mbstring"
+  - "php55-php-mysqlnd"
+  - "php55-php-gd"
+  - "php55-php-xml"

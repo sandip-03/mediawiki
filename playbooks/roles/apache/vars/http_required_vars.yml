@@ -1,0 +1,4 @@
+---
+http_package_list:
+  - "wget"
+  - "httpd24-httpd"

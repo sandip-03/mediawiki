@@ -1,0 +1,8 @@
+---
+php_rpm_list:
+  - "php74"
+  - "php74-php"
+  - "php74-php-mbstring"
+  - "php74-php-mysqlnd"
+  - "php74-php-gd"
+  - "php74-php-xml"

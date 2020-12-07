@@ -1,0 +1,28 @@
+---
+
+- include_vars: php_required_vars.yml
+
+- name: install software collections
+  yum:
+    name: centos-release-scl
+    update_cache: yes
+    state: present
+
+- name: install epel repo
+  yum:
+    name: epel-release
+    update_cache: yes
+    state: present
+
+- name: Install remi-release
+  yum:
+    name: http://rpms.remirepo.net/enterprise/remi-release-7.rpm
+    state: present
+
+- name: Install php 74
+  yum:
+    name: "{{ item }}"
+    update_cache: yes
+    state: present
+  with_items:
+  - "{{ php_rpm_list }}"

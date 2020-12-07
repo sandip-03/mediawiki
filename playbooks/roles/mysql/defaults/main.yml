@@ -1,0 +1,8 @@
+---
+mysql_root_user_name: 'root'
+mysql_root_user_password: 'Passw0rd'
+mysql_db_port: 3306
+app_db_name: 'wikidb'
+app_db_user: 'wiki'
+app_db_password: 'Passw0rd'
+mysql_root_home: '/root'

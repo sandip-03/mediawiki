@@ -2,7 +2,7 @@ Setup Mediawiki 1.35 on Centos 7, Apache 2.4, PHP 7.4 and Mariadb on AWS
 
 Instruction:
 1) Clone this repository on machine running Terraform and Ansible, this machine should have IAM role which include ec2 full access
-2) Edit providers\aws\lamp\variables.tf and populate below variables.tf
+2) Change directory to clone repo folder mediawiki and Edit providers\aws\lamp\variables.tf and populate below variables.tf
 - account_id
 - default_security_groups
 - ssh_key
